@@ -1,4 +1,4 @@
-from typing import final
+#from typing import final
 from Robot import Robot
 from Posicion import Posicion
 from Terreno import Terreno
@@ -9,6 +9,9 @@ class ListaDoble():
         self.inicio = None
         self.final = None
         self.size = 0
+        self.inicio_terreno = None
+        self.final_terreno = None
+        self.size_terreno = 0
                 
     def insertar(self, x, y,valor): 
         nueva_posicion = Posicion(x, y,valor)
@@ -23,6 +26,32 @@ class ListaDoble():
             tmp.siguiente = nueva_posicion
             nueva_posicion.anterior = tmp
             self.final = nueva_posicion
+    
+    def insertar_terrenos(self, indice, nombre, dim_x, dim_y): 
+        nuevo_terreno = Terreno(indice, nombre, dim_x, dim_y)
+        self.size_terreno += 1
+        if self.inicio_terreno is None:
+            self.inicio_terreno = nuevo_terreno
+            self.final_terreno = nuevo_terreno
+        else:
+            tmp = self.inicio_terreno
+            while tmp.siguiente is not None:
+                tmp = tmp.siguiente
+            tmp.siguiente = nuevo_terreno
+            nuevo_terreno.anterior = tmp
+            self.final_terreno = nuevo_terreno        
+
+    def showTerr(self):
+        actual = self.inicio_terreno
+        while actual is not None:
+            temp = actual.siguiente
+            if temp is None:
+                print(actual.nombre)  
+                break
+            print(actual.nombre)  
+            actual = actual.siguiente
+           
+
 
     def showPos(self):
         actual = self.inicio
@@ -109,16 +138,16 @@ class ListaDoble():
             
             posiciones = []
             if valor_abajo is True:
-                nuevo = Terreno(abajo, abajo.valor)
+                nuevo = Robot(abajo, abajo.valor)
                 posiciones.insert(len(posiciones),nuevo)
             if valor_derecha is True:
-                nuevo = Terreno(derecha, derecha.valor)
+                nuevo = Robot(derecha, derecha.valor)
                 posiciones.insert(len(posiciones),nuevo)
             if valor_izquierda is True:
-                nuevo = Terreno(izquierda, izquierda.valor)
+                nuevo = Robot(izquierda, izquierda.valor)
                 posiciones.insert(len(posiciones),nuevo)
             if valor_arriba is True:
-                nuevo = Terreno(arriba, arriba.valor)
+                nuevo = Robot(arriba, arriba.valor)
                 posiciones.insert(len(posiciones),nuevo)
             
             for i in range(1,len(posiciones)):

@@ -1,6 +1,7 @@
-from typing import List
+#from typing import List
 import xml.etree.ElementTree as ET
 from ListaDoble import ListaDoble
+from Terreno import Terreno
 
 combustible = 9999
 
@@ -10,33 +11,35 @@ def leerArchivo():
     with open(ruta, 'rt',encoding='utf-8') as f:
         tree = ET.parse(f)
         root = tree.getroot()
-    #for elem in root:      #nombre del terreno
-     #   print(elem.attrib)
     
+    contador = 0
+    terrenos = ListaDoble()
+    for elem in root:      
+        nombre = elem.get('nombre') #nombre del terreno
+        dim_x = elem.findtext('dimension/m') #dimension x del terreno
+        dim_y = elem.findtext('dimension/n') #dimension y del terreno
+        print(contador,nombre,dim_x,dim_y)
+        terrenos.insertar_terrenos(contador,nombre,dim_x,dim_y)
+        contador += 1
+    terrenos.showTerr()
+        
     posiciones = ListaDoble()
     for node in root.iter('posicion'):
         posx = node.attrib.get('x')
         posy = node.attrib.get('y')
         valor = node.text
-        """if posx and posy:
-            print('x: '+posx)
-            print('y: '+posy)
-            print('valor: '+valor)"""
         posiciones.insertar(posx, posy, valor)
     
-    posiciones.showPos()
-    posiciones.verRuta()
+    #posiciones.showPos()
+    #posiciones.verRuta()
     
-    
-    #for name in root.findall("terreno/dimension/m"): #buscar elementos
-     #   print(name.text)                        #el contenido es text y tag es la etiqueta
-        
 def datos_estudiante():
     print('\t> Arnoldo Luis Antonio González Camey')
     print('\t> 201701548')
     print('\t> Introducción a la Programación y Computación 2 Sección \"D\"')
     print('\t> Ingeniería en Ciencias y Sistemas')
     print('\t> 4to Semestre')
+
 
 def pedir_numero():
     correcto = False

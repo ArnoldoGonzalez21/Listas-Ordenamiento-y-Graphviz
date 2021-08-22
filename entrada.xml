@@ -38,8 +38,12 @@
         <posicion x="5" y="4">1</posicion>
         <posicion x="5" y="5">1</posicion>
     </terreno>
-    <!---
+    
     <terreno nombre="terreno2">
+        <dimension>
+            <m>300</m>
+            <n>400</n>
+        </dimension>
         <posicioninicio>
             <x>2</x>
             <y>2</y>
@@ -76,5 +80,5 @@
         <posicion x="7" y="2">1</posicion>
         <posicion x="7" y="3">1</posicion>
         <posicion x="7" y="4">1</posicion>
-    </terreno>-->
+    </terreno>
 </terrenos>
