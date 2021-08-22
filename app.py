@@ -62,23 +62,22 @@ def main():
         print ("6. Salir")
         opcion = pedir_numero() 
         if opcion == 1:
-            print('Opción Cargar Archivo:')
+            print('\nOpción Cargar Archivo:')
             leerArchivo()
         elif opcion == 2:
-            print('Opción Procesar Terreno:')
+            print('\nOpción Procesar Terreno:')
         elif opcion == 3:
-            print('Opción Escribir Archivo Salida:')
+            print('\nOpción Escribir Archivo Salida:')
         elif opcion == 4:
             print('\nOpción Datos del Estudiante:')
             datos_estudiante()
         elif opcion == 5:
-            print('Opción Generar Gráfica')
+            print('\nOpción Generar Gráfica')
         elif opcion == 6:
             termino = True
             exit() 
         else:
             print('Elige una opción correcta')
-
             
 if __name__ == '__main__':
     leerArchivo()   
