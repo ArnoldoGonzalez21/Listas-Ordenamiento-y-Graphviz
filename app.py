@@ -1,19 +1,35 @@
+from typing import List
+import xml.etree.ElementTree as ET
+from ListaDoble import ListaDoble
+
+combustible = 9999
+
 def leerArchivo():
-    try:
-        fichero = str(input('Ingrese la Ruta del Archivo:'))
-        data = ''
-        with open(fichero, "r", encoding='utf-8') as archivo:
-            print(fichero)
-            data = archivo.read()
-            print('\nArchivo Cargado exitosamente')
-            print(data)
-            data += '°' #saber donde termina el archivo
-        data_limpio = data.strip() #eliminar espacios del final y principio
-        #estudiantes.clear() #resetear lista
-        #recorrerStr(data_limpio)
-    except OSError:
-        print("No se pudo leer el Archivo")
-        exit()
+    #ruta = str(input('Ingrese la Ruta del Archivo: '))
+    ruta = 'entrada.xml'
+    with open(ruta, 'rt',encoding='utf-8') as f:
+        tree = ET.parse(f)
+        root = tree.getroot()
+    #for elem in root:      #nombre del terreno
+     #   print(elem.attrib)
+    
+    posiciones = ListaDoble()
+    for node in root.iter('posicion'):
+        posx = node.attrib.get('x')
+        posy = node.attrib.get('y')
+        valor = node.text
+        """if posx and posy:
+            print('x: '+posx)
+            print('y: '+posy)
+            print('valor: '+valor)"""
+        posiciones.insertar(posx, posy, valor)
+    
+    posiciones.showPos()
+    posiciones.verRuta()
+    
+    
+    #for name in root.findall("terreno/dimension/m"): #buscar elementos
+     #   print(name.text)                        #el contenido es text y tag es la etiqueta
         
 def datos_estudiante():
     print('\t> Arnoldo Luis Antonio González Camey')
@@ -49,19 +65,20 @@ def main():
             print('Opción Cargar Archivo:')
             leerArchivo()
         elif opcion == 2:
-            print(2)
+            print('Opción Procesar Terreno:')
         elif opcion == 3:
-            print(3)
+            print('Opción Escribir Archivo Salida:')
         elif opcion == 4:
             print('\nOpción Datos del Estudiante:')
             datos_estudiante()
         elif opcion == 5:
-            print(5)
+            print('Opción Generar Gráfica')
         elif opcion == 6:
             termino = True
             exit() 
         else:
             print('Elige una opción correcta')
+
             
 if __name__ == '__main__':
-    main()   
+    leerArchivo()   
