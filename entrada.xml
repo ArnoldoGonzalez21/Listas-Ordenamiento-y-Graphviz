@@ -1,12 +1,12 @@
 <terrenos>
     <terreno nombre="terreno1">
         <dimension>
-            <m>200</m>
-            <n>100</n>
+            <m>5</m>
+            <n>5</n>
         </dimension>
         <posicioninicio>
             <x>1</x>
-            <y>1</y>
+            <y>2</y>
         </posicioninicio>
         <posicionfin>
             <x>5</x>
@@ -41,8 +41,8 @@
     
     <terreno nombre="terreno2">
         <dimension>
-            <m>300</m>
-            <n>400</n>
+            <m>7</m>
+            <n>4</n>
         </dimension>
         <posicioninicio>
             <x>2</x>
@@ -51,6 +51,48 @@
         <posicionfin>
             <x>6</x>
             <y>1</y>
+        </posicionfin>
+        <posicion x="1" y="1">1</posicion>
+        <posicion x="1" y="2">1</posicion>
+        <posicion x="1" y="3">1</posicion>
+        <posicion x="1" y="4">3</posicion>
+        <posicion x="2" y="1">5</posicion>
+        <posicion x="2" y="2">1</posicion>
+        <posicion x="2" y="3">2</posicion>
+        <posicion x="2" y="4">3</posicion>
+        <posicion x="3" y="1">6</posicion>
+        <posicion x="3" y="2">9</posicion>
+        <posicion x="3" y="3">3</posicion>
+        <posicion x="3" y="4">4</posicion>
+        <posicion x="4" y="1">8</posicion>
+        <posicion x="4" y="2">4</posicion>
+        <posicion x="4" y="3">4</posicion>
+        <posicion x="4" y="4">1</posicion>
+        <posicion x="5" y="1">7</posicion>
+        <posicion x="5" y="2">3</posicion>
+        <posicion x="5" y="3">1</posicion>
+        <posicion x="5" y="4">5</posicion>
+        <posicion x="6" y="1">1</posicion>
+        <posicion x="6" y="2">2</posicion>
+        <posicion x="6" y="3">2</posicion>
+        <posicion x="6" y="4">2</posicion>
+        <posicion x="7" y="1">3</posicion>
+        <posicion x="7" y="2">1</posicion>
+        <posicion x="7" y="3">1</posicion>
+        <posicion x="7" y="4">1</posicion>
+    </terreno>
+    <terreno nombre="terreno3">
+        <dimension>
+            <m>7</m>
+            <n>4</n>
+        </dimension>
+        <posicioninicio>
+            <x>1</x>
+            <y>1</y>
+        </posicioninicio>
+        <posicionfin>
+            <x>2</x>
+            <y>3</y>
         </posicionfin>
         <posicion x="1" y="1">1</posicion>
         <posicion x="1" y="2">1</posicion>
