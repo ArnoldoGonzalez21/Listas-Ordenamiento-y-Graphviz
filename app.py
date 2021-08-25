@@ -33,8 +33,7 @@ def leer_archivo():
         if int(posx) == 1 and int(posy) == 1:
             contador_pos +=1
             contador_id = 1
-        #print(contador_pos, contador_id, posx, posy, valor)
-        posiciones.insertar(contador_pos, contador_id, posx, posy, valor)          
+        posiciones.insertar(contador_pos, contador_id, posx, posy, valor, False)          
            
 def datos_estudiante():
     print('\t> Arnoldo Luis Antonio González Camey')
@@ -60,7 +59,8 @@ def procesar_terreno():
     print('indice: ',indice_terreno)
     posiciones.mostrar_posiciones(indice_terreno)
     terrenos.datos_terreno(indice_terreno)
-    posiciones.ver_ruta(indice_terreno)    
+    posiciones.ver_ruta(indice_terreno)   
+    posiciones.mostrar_posiciones_camino(indice_terreno) 
             
 def main():
     termino = False

@@ -21,8 +21,8 @@ class ListaDoble():
         self.final_terreno = None
         self.size_terreno = 0
                 
-    def insertar(self, indice_terreno, id, x, y, valor): 
-        nueva_posicion = Posicion(indice_terreno, id, x, y, valor)
+    def insertar(self, indice_terreno, id, x, y, valor, entro): 
+        nueva_posicion = Posicion(indice_terreno, id, x, y, valor, entro)
         self.size += 1
         if self.inicio is None:
             self.inicio = nueva_posicion
@@ -55,15 +55,35 @@ class ListaDoble():
             if actual.indice_terreno is indice_terreno:
                 tmp = actual.siguiente
                 if tmp is None:
-                    print(actual.valor + '\t', end = " ") 
+                    print(actual.valor, '\t', end = " ") 
                     break
                 if actual.x < tmp.x:
-                    print(actual.valor + '\t')  
+                    print(actual.valor, '\t')  
                 else:
-                    print(actual.valor + '\t', end = " ")
+                    print(actual.valor, '\t', end = " ")
                 actual = actual.siguiente 
             else:
                 actual = actual.siguiente 
+    
+    def mostrar_posiciones_camino(self, indice_terreno):
+        actual = self.inicio
+        while actual is not None:
+            if actual.indice_terreno is indice_terreno:
+                tmp = actual.siguiente
+                if tmp is None:
+                    if actual.entro is True: print('1','\t', end = " ")
+                    else: print('O','\t', end = " ")
+                    break
+                if actual.x < tmp.x:
+                    if actual.entro is True: print('1','\t')
+                    else: print('O','\t')
+                else:
+                    if actual.entro is True: print('1','\t', end = " ")
+                    else: print('O','\t', end = " ")
+                actual = actual.siguiente 
+            else:
+                actual = actual.siguiente  
+        print('\n')                   
         
     def buscar_terreno(self,nombre_terreno):
         actual_ter = self.inicio_terreno
@@ -71,8 +91,7 @@ class ListaDoble():
             if nombre_terreno == actual_ter.nombre:
                 return actual_ter.indice  
             actual_ter = actual_ter.siguiente      
-    
-      
+     
     def datos_terreno(self, indice_terreno):
         global inicio_x 
         global inicio_y 
@@ -103,9 +122,10 @@ class ListaDoble():
         global fin_y
         global dim_x
         global dim_y
-        contador = 0
-        posicion_anterior = None
+        global combustible
         posicion_actual = None
+        gasto_combustible = 0
+        contador = 0
         
         tamano_terreno = int(dim_x)*int(dim_y)
         print('\ntamaño terreno',tamano_terreno,'\n')
@@ -119,7 +139,8 @@ class ListaDoble():
                     final = actual_tamano
                     print('final',final.valor)
             actual_tamano = actual_tamano.siguiente
-            
+        gasto_combustible += int(actual.valor)  
+        
         while actual is not final:
             if actual.indice_terreno is indice_terreno:
                 valor_derecha = True 
@@ -127,9 +148,7 @@ class ListaDoble():
                 valor_abajo = False
                 valor_arriba = True
                 w = self.inicio   
-                s = actual                      
-                #right = object
-                #left = object
+                s = actual     
                 up = None
                 down = None
                 print('\n....................')
@@ -187,19 +206,15 @@ class ListaDoble():
                 
                 posiciones = []
                 if valor_abajo:
-                    print('aba',down.x, down.y)
                     nuevo_abajo = Robot(down, down.valor, 'Abajo')
                     posiciones.append(nuevo_abajo)
                 if valor_derecha:
-                    print('der', right.x, right.y)
                     nuevo_derecha = Robot(right, right.valor, 'Derecha')
                     posiciones.append(nuevo_derecha)
                 if valor_izquierda:
-                    print('iz',left.x,left.y)
                     nuevo_izquierda = Robot(left, left.valor, 'Izquierda')
                     posiciones.append(nuevo_izquierda)
                 if valor_arriba:
-                    print('arri',up.x, up.y)
                     nuevo_arriba = Robot(up, up.valor, 'Arriba')
                     posiciones.append(nuevo_arriba)
                 
@@ -211,36 +226,46 @@ class ListaDoble():
                     print('lista:',posiciones[k].nombre,' valor -',pos.valor,' - x:',pos.x,' - y:', pos.y )
                     k += 1  
                 
-                
-                
-                    
                 i = 0
-                for i in range(len(posiciones)):                    
+                for i in range(len(posiciones)):  
                     if posicion_elegida is not None or posicion_actual is not None:
                         posicion_elegida = posiciones[i].posicion
-                        print('ele',posicion_elegida.id,'id ant',posicion_actual.id)
-                        if posicion_elegida.id is posicion_actual.id:
-                            posicion_elegida = posiciones[i+1].posicion
-                            print('entre acaaaa')
+                        if posicion_elegida.entro is False:
                             break
-                        else:
-                            break
+                        #if posicion_elegida.id is posicion_actual.id or posicion_elegida.entro is True:
+                            #posicion_elegida = posiciones[i].posicion
+                        #else:
+                         #   break
                     else:
                         posicion_elegida = posiciones[i].posicion
                         break
                 posicion_actual = actual  
                     
                 print("elegido:",posicion_elegida.valor,' - x:',posicion_elegida.x,' - y',posicion_elegida.y) 
+                gasto_combustible += int(posicion_elegida.valor)
+                actual.setEntro(True)
                 posiciones.clear()     
-                actual = posicion_elegida
-                #if contador == 4:
-                 #   return
-                #contador += 1      
+                actual = posicion_elegida 
+                if actual is final: 
+                    final.setEntro(True)  
+                    
+                if contador == tamano_terreno:
+                    print('\t \t \t¡ALERTA! \n<<<<<Lastimosamente hemos perdido comunicación con el Robot!')
+                    print('Se ha extraviado en su viaje por los inhóspitos terrenos>>>>>')
+                    print('\n\t\t<<<<<Gasto combustible>>>>>','\n\t\t\t    ',gasto_combustible)
+                    combustible -= gasto_combustible
+                    print('\n\t\t<<<<<Combustible Sobrante>>>>>''\n\t\t\t    ',combustible,'\n')
+                    return
+                contador += 1
+                    
             else:
                 actual = actual.siguiente 
             if actual is None:
                 print('nooooooooooooooooooooooneeeeeeee')
-    
+        print('\n<<<<<Gasto combustible>>>>>',gasto_combustible)
+        combustible -= gasto_combustible
+        print('\n<<<<<Combustible Sobrante>>>>>',combustible)
+               
     def ordenamiento(self,posiciones):
         for i in range(1,len(posiciones)):
             for j in range(0,len(posiciones)-i):
