@@ -19,6 +19,9 @@ class ListaDoble():
         self.inicio_terreno = None
         self.final_terreno = None
         self.size_terreno = 0
+        self.inicio_robot = None
+        self.final_robot = None
+        self.size_robot = 0
                 
     def insertar(self, indice_terreno, id, x, y, valor, entro): 
         nueva_posicion = Posicion(indice_terreno, id, x, y, valor, entro)
@@ -46,7 +49,21 @@ class ListaDoble():
                 tmp = tmp.siguiente
             tmp.siguiente = nuevo_terreno
             nuevo_terreno.anterior = tmp
-            self.final_terreno = nuevo_terreno                      
+            self.final_terreno = nuevo_terreno     
+            
+    def insertar_robot(self, posicion, valor, nombre): 
+        nuevo = Robot(posicion, valor, nombre)
+        self.size_robot += 1
+        if self.inicio_robot is None:
+            self.inicio_robot = nuevo
+            self.final_robot = nuevo
+        else:
+            tmp = self.inicio_robot
+            while tmp.siguiente is not None:
+                tmp = tmp.siguiente
+            tmp.siguiente = nuevo
+            nuevo.anterior = tmp
+            self.final_robot = nuevo                         
 
     def mostrar_posiciones(self, indice_terreno):
         actual = self.inicio
@@ -328,24 +345,35 @@ class ListaDoble():
                             w = w.siguiente 
                         else:    
                             w = w.siguiente  
-                    
-                    posiciones = []
+                    #posiciones = []
                     if valor_abajo:
-                        nuevo_abajo = Robot(down, down.valor, 'Abajo')
-                        posiciones.append(nuevo_abajo)
+                        self.insertar_robot(down, down.valor, 'Abajo')
+                        #nuevo_abajo = Robot(down, down.valor, 'Abajo')
+                        #posiciones.append(nuevo_abajo)
+                        #down_valor = down.valor
                     if valor_derecha:
-                        nuevo_derecha = Robot(right, right.valor, 'Derecha')
-                        posiciones.append(nuevo_derecha)
+                        self.insertar_robot(right, right.valor, 'Derecha')
+                        #nuevo_derecha = Robot(right, right.valor, 'Derecha')
+                        #posiciones.append(nuevo_derecha)
+                        #right_valor = right.valor
                     if valor_izquierda:
-                        nuevo_izquierda = Robot(left, left.valor, 'Izquierda')
-                        posiciones.append(nuevo_izquierda)
+                        self.insertar_robot(left, left.valor, 'Izquierda')
+                        #nuevo_izquierda = Robot(left, left.valor, 'Izquierda')
+                        #posiciones.append(nuevo_izquierda)
+                        #left_valor = left.valor
                     if valor_arriba:
-                        nuevo_arriba = Robot(up, up.valor, 'Arriba')
-                        posiciones.append(nuevo_arriba)
+                        self.insertar_robot(up, up.valor, 'Arriba')
+                        #nuevo_arriba = Robot(up, up.valor, 'Arriba')
+                        #posiciones.append(nuevo_arriba)
+                        #up_valor = up.valor
+                            
                     
-                    self.ordenamiento(posiciones)
                     
-                    i = 0
+                    
+                    #self.ordenamiento(posiciones)
+                    posicion_elegida = self.BubbleSort(posicion_elegida)
+                    
+                    """i = 0
                     for i in range(len(posiciones)):  
                         if posicion_elegida is not None or posicion_actual is not None:
                             posicion_elegida = posiciones[i].posicion
@@ -354,12 +382,15 @@ class ListaDoble():
                         else:
                             posicion_elegida = posiciones[i].posicion
                             break
-                    posicion_actual = actual  
+                    posicion_actual = actual"""  
+                    
+                    
+                    
                         
                     #print("elegido:",posicion_elegida.valor,' - x:',posicion_elegida.x,' - y',posicion_elegida.y) 
                     gasto_combustible += int(posicion_elegida.valor)
                     actual.setEntro(True)
-                    posiciones.clear()     
+                    #posiciones.clear()     
                     actual = posicion_elegida 
                     if actual is final: 
                         final.setEntro(True)  
@@ -390,7 +421,7 @@ class ListaDoble():
             actual_limpieza.setEntro(False)
             actual_limpieza = actual_limpieza.siguiente
                
-    def ordenamiento(self,posiciones):
+    """def ordenamiento(self,posiciones):
         for i in range(1,len(posiciones)):
             for j in range(0,len(posiciones)-i):
                 if (posiciones[j+1].valor < posiciones[j].valor):
@@ -402,7 +433,49 @@ class ListaDoble():
                     posiciones[j].nombre = posiciones[j+1].nombre
                     posiciones[j+1].valor = aux 
                     posiciones[j+1].posicion = aux2 
-                    posiciones[j+1].nombre = aux3 
+                    posiciones[j+1].nombre = aux3 """
+    
+    def BubbleSort(self, posicion_elegida):
+        actual = self.inicio_robot
+        if self.size_robot > 1:
+            while True:
+                actual = self.inicio_robot
+                ant = None 
+                sig = self.inicio_robot.siguiente  
+                cambio = False
+                while sig != None:
+                    if actual.valor > sig.valor:
+                        cambio = True
+                        if ant != None:
+                            tmp = sig.siguiente
+                            ant.siguiente = sig
+                            sig.siguiente = actual
+                            actual.siguiente = tmp
+                        else:
+                            tmp2 = sig.siguiente
+                            self.inicio_robot = sig
+                            sig.siguiente = actual
+                            actual.siguiente = tmp2
+                        ant = sig
+                        sig = actual.siguiente
+                    else:
+                        ant = actual
+                        actual = sig
+                        sig = sig.siguiente
+                if not cambio:
+                    break
+        actual = self.inicio_robot
+        while actual is not None:
+            posicion_elegida = actual.posicion
+            if posicion_elegida.entro is False:
+               break
+            else:
+                actual = actual.siguiente 
+        self.inicio_robot = None
+        self.final_robot = None  
+        return posicion_elegida    
+                            
+                    
     
     
                 
