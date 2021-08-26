@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from os import startfile, system
 from ListaDoble import ListaDoble
 
 terrenos = ListaDoble() 
@@ -40,7 +41,7 @@ def datos_estudiante():
     print('\t> 201701548')
     print('\t> Introducción a la Programación y Computación 2 Sección \"D\"')
     print('\t> Ingeniería en Ciencias y Sistemas')
-    print('\t> 4to Semestre')
+    print('\t> 6to Semestre')
 
 def pedir_numero():
     correcto = False
@@ -53,7 +54,10 @@ def pedir_numero():
             print('Elige un número')
     return numero
 
+indice_terreno = -1
+
 def procesar_terreno():
+    global indice_terreno
     nombre_terreno = input("Escribe el nombre del terreno a procesar: ") 
     indice_terreno = terrenos.buscar_terreno(nombre_terreno)
     print('indice: ',indice_terreno)
@@ -61,6 +65,40 @@ def procesar_terreno():
     terrenos.datos_terreno(indice_terreno)
     posiciones.ver_ruta(indice_terreno)   
     posiciones.mostrar_posiciones_camino(indice_terreno) 
+
+def generarGraphviz(termino):
+    global indice_terreno
+    nombre_terreno = terrenos.buscar_nombre_terreno(indice_terreno)
+    inicio_graphviz = '''
+    digraph L{
+        node[shape = circle fillcolor="white" style = filled]
+        subgraph cluster_p{
+            label = \"'''+nombre_terreno+''' \"
+            bgcolor = "#398D9C"
+            raiz[label = "0,0"]
+            edge[dir = "both"]
+        '''
+    lateral = posiciones.contenido_lateral()
+    
+    nodos = posiciones.enlazar_nodos(indice_terreno, termino)
+    final_graphviz = '}   }'
+    graphviz = inicio_graphviz + lateral + nodos + final_graphviz
+    print(graphviz)
+    if termino:
+        miArchivo= open('graphviz_explorado.dot','w')
+        miArchivo.write(graphviz)
+        miArchivo.close()
+        system('dot -Tpng graphviz_explorado.dot -o Terreno_explorado.png')
+        system('cd ./Terreno_explorado.png')
+        startfile('Terreno_explorado.png')
+    else:
+        miArchivo= open('graphviz_inexplorado.dot','w')
+        miArchivo.write(graphviz)
+        miArchivo.close()
+        system('dot -Tpng graphviz_inexplorado.dot -o Terreno_inexplorado.png')
+        system('cd ./Terreno_inexplorado.png')
+        startfile('Terreno_inexplorado.png')
+            
             
 def main():
     termino = False
@@ -87,6 +125,8 @@ def main():
             datos_estudiante()
         elif opcion == 5:
             print('\nOpción Generar Gráfica')
+            generarGraphviz(False)
+            generarGraphviz(True)
         elif opcion == 6:
             termino = True
             exit() 

@@ -3,7 +3,6 @@ from Robot import Robot
 from Posicion import Posicion
 from Terreno import Terreno
 
- 
 inicio_x = 0    
 inicio_y = 0
 fin_x = 0
@@ -64,7 +63,7 @@ class ListaDoble():
                 actual = actual.siguiente 
             else:
                 actual = actual.siguiente 
-    
+        
     def mostrar_posiciones_camino(self, indice_terreno):
         actual = self.inicio
         while actual is not None:
@@ -90,7 +89,15 @@ class ListaDoble():
         while actual_ter is not None:
             if nombre_terreno == actual_ter.nombre:
                 return actual_ter.indice  
-            actual_ter = actual_ter.siguiente      
+            actual_ter = actual_ter.siguiente  
+             
+    def buscar_nombre_terreno(self,indice_terreno):
+        actual_ter = self.inicio_terreno
+        while actual_ter is not None:
+            if indice_terreno is actual_ter.indice:
+                return actual_ter.nombre  
+            actual_ter = actual_ter.siguiente
+        return 'Nombre Desconocido'              
      
     def datos_terreno(self, indice_terreno):
         global inicio_x 
@@ -110,7 +117,108 @@ class ListaDoble():
                 dim_y = actual_datos.dimension_y
                 break
             actual_datos = actual_datos.siguiente
-             
+    
+    def contenido_lateral(self):
+        global dim_y
+        global dim_x
+        contenido = ''
+        contenido_fila_columna = ''
+        contenido_enlace = ''
+        rango_fila = int(dim_x)
+        rango_columna = int(dim_y)
+        for i in range(rango_fila):
+            contenido_fila_columna += 'F'+str(i+1)+'[label=\"'+str(i+1)+'\",group=1,fillcolor=yellow];\n'
+        for j in range(rango_columna):
+            contenido_fila_columna += 'C'+str(j+1)+'[label=\"'+str(j+1)+'\",group='+str(j+2)+',fillcolor=yellow];\n'
+        for k in range(rango_fila - 1):
+            contenido_enlace += 'F'+str(k+1)+' -> F'+str(k+2)+';\n'
+        for m in range(rango_columna - 1):
+            contenido_enlace += 'C'+str(m+1)+' -> C'+str(m+2)+';\n'        
+        contenido = contenido_fila_columna + contenido_enlace
+        contenido += 'raiz -> F1; \nraiz -> C1;\n{rank = same;raiz;'
+        for n in range(rango_columna):
+            contenido += 'C'+str(n+1)
+            if n < rango_columna - 1:
+                contenido += ';'      
+        contenido += '}'
+        print(contenido)
+        return contenido
+    
+    def enlazar_nodos(self, indice_terreno, termino):
+        global dim_y
+        global dim_x
+        contenido = ''
+        contenido_enlace_c = ''
+        contenido_enlace_f = ''
+        contenido_enlace_nodo_f = ''
+        contenido_enlace_nodo_c = ''
+        contenido_enlace_rank = ''
+        i = 0
+        j = 0
+        k = 0
+        actual = self.inicio
+        actual_enlace = self.inicio
+        actual_enlace_2 = self.inicio
+        while actual is not None:
+            if actual.indice_terreno is indice_terreno:
+                tmp = actual.siguiente
+                if tmp is None:
+                    break
+                if termino:
+                    if actual.entro: 
+                        contenido += 'nodo'+actual.x+'_'+actual.y+'[label=\"1\",fillcolor=green,group='+str(int(actual.y) + 1)+']\n'
+                    else:
+                        contenido += 'nodo'+actual.x+'_'+actual.y+'[label=\"O\",fillcolor=gray,group='+str(int(actual.y) + 1)+']\n'
+                else: 
+                    contenido += 'nodo'+actual.x+'_'+actual.y+'[label=\"'+actual.valor+'\",fillcolor=green,group='+str(int(actual.y) + 1)+']\n'
+                if actual.x == str(1):
+                    contenido_enlace_c += 'C'+str(i+1)+' -> nodo'+actual.x+'_'+actual.y+';\n'
+                    i += 1
+                if actual.y == str(1):
+                    contenido_enlace_f += 'F'+str(j+1)+' -> nodo'+actual.x+'_'+actual.y+';\n'
+                    j += 1
+                if actual.y < tmp.y:   
+                    contenido_enlace_nodo_f += 'nodo'+actual.x+'_'+actual.y+' -> nodo'+tmp.x+'_'+tmp.y+';\n'      
+                actual = actual.siguiente
+            else:
+                actual = actual.siguiente
+         
+        rango_fila = int(dim_x)
+        for i in range(rango_fila):
+            contenido_enlace_rank += '{rank = same;F'+str(i+1)      
+            while actual_enlace is not None:
+                if actual_enlace.indice_terreno is indice_terreno:
+                    tmp = actual_enlace.siguiente
+                    if tmp is None:
+                        break
+                    if actual_enlace.x == str(i+1):
+                        contenido_enlace_rank += ';nodo'+actual_enlace.x+'_'+actual_enlace.y+''
+                    else:
+                        break
+                    
+                    actual_enlace = actual_enlace.siguiente
+                else:
+                    actual_enlace = actual_enlace.siguiente
+            contenido_enlace_rank += '}\n'
+            
+        rango_columna = int(dim_y)   
+        for j in range(rango_columna):   
+            while actual_enlace_2 is not None:
+                if actual_enlace_2.indice_terreno is indice_terreno:
+                    if str(int(actual_enlace_2.x)+1) <= dim_x:
+                        contenido_enlace_nodo_c += 'nodo'+actual_enlace_2.x+'_'+actual_enlace_2.y+' -> nodo'+str(int(actual_enlace_2.x)+1)+'_'+actual_enlace_2.y+';\n'
+                    actual_enlace_2 = actual_enlace_2.siguiente
+                else:
+                    actual_enlace_2 = actual_enlace_2.siguiente
+            
+        contenido += contenido_enlace_f
+        contenido += contenido_enlace_nodo_f
+        contenido += contenido_enlace_c   
+        contenido += contenido_enlace_rank    
+        contenido += contenido_enlace_nodo_c 
+        #print(contenido)      
+        return contenido              
+                 
     def ver_ruta(self, indice_terreno):
         actual = self.inicio
         final = self.final
@@ -129,7 +237,7 @@ class ListaDoble():
         
         tamano_terreno = int(dim_x)*int(dim_y)
         print('\ntamaño terreno',tamano_terreno,'\n')
-        
+        self.contenido_lateral()
         while actual_tamano is not None:
             if actual_tamano.indice_terreno is indice_terreno:
                 if inicio_x is actual_tamano.x and inicio_y is actual_tamano.y:
@@ -250,7 +358,7 @@ class ListaDoble():
                     final.setEntro(True)  
                     
                 if contador == tamano_terreno:
-                    print('\t \t \t¡ALERTA! \n<<<<<Lastimosamente hemos perdido comunicación con el Robot!')
+                    print('\t \t \t¡ALERTA! \n<<<<<Lastimosamente hemos perdido comunicación con r2e2!')
                     print('Se ha extraviado en su viaje por los inhóspitos terrenos>>>>>')
                     print('\n\t\t<<<<<Gasto combustible>>>>>','\n\t\t\t    ',gasto_combustible)
                     combustible -= gasto_combustible
@@ -279,5 +387,6 @@ class ListaDoble():
                     posiciones[j+1].valor = aux 
                     posiciones[j+1].posicion = aux2 
                     posiciones[j+1].nombre = aux3 
-                    
+    
+    
                 
