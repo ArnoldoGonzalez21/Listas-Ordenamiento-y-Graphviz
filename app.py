@@ -56,19 +56,30 @@ def pedir_numero():
 
 indice_terreno = -1
 
-def procesar_terreno():
+def procesar_terreno(grafica):
     global indice_terreno
-    nombre_terreno = input("Escribe el nombre del terreno a procesar: ") 
-    indice_terreno = terrenos.buscar_terreno(nombre_terreno)
-    print('indice: ',indice_terreno)
+    if grafica:
+        posiciones.limpieza()
+        terrenos.buscar_nombre_terreno_grafica()
+        indice_terreno = input("Digite el número de la ruta del terreno a graficar: ") 
+        indice_terreno = int(indice_terreno) - 1
+    else:
+        posiciones.limpieza()        
+        nombre_terreno = input("Escribe el nombre del terreno a procesar: ") 
+        indice_terreno = terrenos.buscar_terreno(nombre_terreno)
     posiciones.mostrar_posiciones(indice_terreno)
     terrenos.datos_terreno(indice_terreno)
-    posiciones.ver_ruta(indice_terreno)   
+    posiciones.ver_ruta(indice_terreno)
+    if grafica is False:  
+        print('<<<Camino Elegido por R2e2 en',nombre_terreno,'>>>') 
     posiciones.mostrar_posiciones_camino(indice_terreno) 
+    if grafica:
+        generarGraphviz(indice_terreno,False)
+        generarGraphviz(indice_terreno,True)
 
-def generarGraphviz(termino):
-    global indice_terreno
-    nombre_terreno = terrenos.buscar_nombre_terreno(indice_terreno)
+def generarGraphviz(indice, termino):
+    indice = str(indice)
+    nombre_terreno = terrenos.buscar_nombre_terreno(indice)
     inicio_graphviz = '''
     digraph L{
         node[shape = circle fillcolor="white" style = filled]
@@ -80,26 +91,25 @@ def generarGraphviz(termino):
         '''
     lateral = posiciones.contenido_lateral()
     
-    nodos = posiciones.enlazar_nodos(indice_terreno, termino)
+    nodos = posiciones.enlazar_nodos(indice, termino)
     final_graphviz = '}   }'
     graphviz = inicio_graphviz + lateral + nodos + final_graphviz
     print(graphviz)
     if termino:
-        miArchivo= open('graphviz_explorado.dot','w')
+        miArchivo= open('graphviz_explorado'+indice+'.dot','w')
         miArchivo.write(graphviz)
         miArchivo.close()
-        system('dot -Tpng graphviz_explorado.dot -o Terreno_explorado.png')
-        system('cd ./Terreno_explorado.png')
-        startfile('Terreno_explorado.png')
+        system('dot -Tpng graphviz_explorado'+indice+'.dot -o Terreno_explorado'+indice+'.png')
+        system('cd ./Terreno_explorado'+indice+'.png')
+        startfile('Terreno_explorado'+indice+'.png')
     else:
-        miArchivo= open('graphviz_inexplorado.dot','w')
+        miArchivo= open('graphviz_inexplorado'+indice+'.dot','w')
         miArchivo.write(graphviz)
         miArchivo.close()
-        system('dot -Tpng graphviz_inexplorado.dot -o Terreno_inexplorado.png')
-        system('cd ./Terreno_inexplorado.png')
-        startfile('Terreno_inexplorado.png')
-            
-            
+        system('dot -Tpng graphviz_inexplorado'+indice+'.dot -o Terreno_inexplorado'+indice+'.png')
+        system('cd ./Terreno_inexplorado'+indice+'.png')
+        startfile('Terreno_inexplorado'+indice+'.png')
+                  
 def main():
     termino = False
     opcion = 0   
@@ -117,7 +127,7 @@ def main():
             leer_archivo()
         elif opcion == 2:
             print('\nOpción Procesar Terreno:')
-            procesar_terreno()
+            procesar_terreno(False)
         elif opcion == 3:
             print('\nOpción Escribir Archivo Salida:')
         elif opcion == 4:
@@ -125,8 +135,7 @@ def main():
             datos_estudiante()
         elif opcion == 5:
             print('\nOpción Generar Gráfica')
-            generarGraphviz(False)
-            generarGraphviz(True)
+            procesar_terreno(True)
         elif opcion == 6:
             termino = True
             exit() 

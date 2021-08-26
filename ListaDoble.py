@@ -94,11 +94,19 @@ class ListaDoble():
     def buscar_nombre_terreno(self,indice_terreno):
         actual_ter = self.inicio_terreno
         while actual_ter is not None:
-            if indice_terreno is actual_ter.indice:
+            if int(indice_terreno) == int(actual_ter.indice):
                 return actual_ter.nombre  
             actual_ter = actual_ter.siguiente
         return 'Nombre Desconocido'              
-     
+    
+    def buscar_nombre_terreno_grafica(self):
+        actual_ter = self.inicio_terreno
+        i = 0
+        while actual_ter is not None:
+            print(i+1,')',actual_ter.nombre)
+            i += 1
+            actual_ter = actual_ter.siguiente        
+         
     def datos_terreno(self, indice_terreno):
         global inicio_x 
         global inicio_y 
@@ -141,7 +149,6 @@ class ListaDoble():
             if n < rango_columna - 1:
                 contenido += ';'      
         contenido += '}'
-        print(contenido)
         return contenido
     
     def enlazar_nodos(self, indice_terreno, termino):
@@ -160,9 +167,18 @@ class ListaDoble():
         actual_enlace = self.inicio
         actual_enlace_2 = self.inicio
         while actual is not None:
-            if actual.indice_terreno is indice_terreno:
+            if int(actual.indice_terreno) == int(indice_terreno):
                 tmp = actual.siguiente
                 if tmp is None:
+                    if termino:
+                        if actual.entro: 
+                            contenido += 'nodo'+actual.x+'_'+actual.y+'[label=\"1\",fillcolor=green,group='+str(int(actual.y) + 1)+']\n'
+                        else:
+                            contenido += 'nodo'+actual.x+'_'+actual.y+'[label=\"O\",fillcolor=gray,group='+str(int(actual.y) + 1)+']\n'
+                    else: 
+                        contenido += 'nodo'+actual.x+'_'+actual.y+'[label=\"'+actual.valor+'\",fillcolor=green,group='+str(int(actual.y) + 1)+']\n'
+                
+                    
                     break
                 if termino:
                     if actual.entro: 
@@ -185,13 +201,17 @@ class ListaDoble():
          
         rango_fila = int(dim_x)
         for i in range(rango_fila):
-            contenido_enlace_rank += '{rank = same;F'+str(i+1)      
+            contenido_enlace_rank += '\n{rank = same;F'+str(i+1)      
             while actual_enlace is not None:
-                if actual_enlace.indice_terreno is indice_terreno:
+                if int(actual_enlace.indice_terreno) == int(indice_terreno):
                     tmp = actual_enlace.siguiente
                     if tmp is None:
+                        if str(actual_enlace.x) == str(i+1):
+                            contenido_enlace_rank += ';nodo'+actual_enlace.x+'_'+actual_enlace.y+''
+                        else:
+                            break
                         break
-                    if actual_enlace.x == str(i+1):
+                    if str(actual_enlace.x) == str(i+1):
                         contenido_enlace_rank += ';nodo'+actual_enlace.x+'_'+actual_enlace.y+''
                     else:
                         break
@@ -199,12 +219,12 @@ class ListaDoble():
                     actual_enlace = actual_enlace.siguiente
                 else:
                     actual_enlace = actual_enlace.siguiente
-            contenido_enlace_rank += '}\n'
+            contenido_enlace_rank += '}'
             
         rango_columna = int(dim_y)   
         for j in range(rango_columna):   
             while actual_enlace_2 is not None:
-                if actual_enlace_2.indice_terreno is indice_terreno:
+                if int(actual_enlace_2.indice_terreno) == int(indice_terreno):
                     if str(int(actual_enlace_2.x)+1) <= dim_x:
                         contenido_enlace_nodo_c += 'nodo'+actual_enlace_2.x+'_'+actual_enlace_2.y+' -> nodo'+str(int(actual_enlace_2.x)+1)+'_'+actual_enlace_2.y+';\n'
                     actual_enlace_2 = actual_enlace_2.siguiente
@@ -236,143 +256,139 @@ class ListaDoble():
         contador = 0
         
         tamano_terreno = int(dim_x)*int(dim_y)
-        print('\ntamaño terreno',tamano_terreno,'\n')
-        self.contenido_lateral()
+        print('\n\n<<<Tamaño Terreno>>>\n',tamano_terreno)
         while actual_tamano is not None:
             if actual_tamano.indice_terreno is indice_terreno:
                 if inicio_x is actual_tamano.x and inicio_y is actual_tamano.y:
                     actual = actual_tamano
-                    print('actual',actual.valor)
                 elif fin_x is actual_tamano.x and fin_y is actual_tamano.y:
                     final = actual_tamano
-                    print('final',final.valor)
             actual_tamano = actual_tamano.siguiente
         gasto_combustible += int(actual.valor)  
-        
-        while actual is not final:
-            if actual.indice_terreno is indice_terreno:
-                valor_derecha = True 
-                valor_izquierda = True
-                valor_abajo = False
-                valor_arriba = True
-                w = self.inicio   
-                s = actual     
-                up = None
-                down = None
-                print('\n....................')
-                print("Actual valor: ",actual.valor)  
-                #----------Derecha-------------            
-                tmp = actual.siguiente
-                right = tmp
-                if tmp is None:
-                    right is None
-                    valor_derecha = False
-                if tmp.y < actual.y:
-                    right is None
-                    valor_derecha = False
-                
-                if right is not None:
-                    print('Derecha valor: ',right.valor,' - x:', right.x,' - y:', right.y)    
-                #----------Izquierda-------------
-                tmp2 = actual.anterior
-                left = tmp2  
-                if tmp2 is None:
-                    left = None
-                    valor_izquierda = False
-                if tmp2.y > actual.y:
-                    left = None
-                    valor_izquierda = False
-                
-                if left is not None:
-                    print('Izquierda valor: ',left.valor,' - x:', left.x,' - y:', left.y)      
-                #----------Abajo-------------
-                id_abajo = actual.id + int(dim_y)
-                while s is not None:
-                    if s.indice_terreno == indice_terreno:
-                        if id_abajo == s.id:
-                            valor_abajo = True
-                            down = s
-                            break
-                    s = s.siguiente
-                
-                if down is not None:
-                    print('Abajo valor: ',down.valor,' - x:', down.x,' - y:', down.y) 
-                #----------Arriba-------------
-                id_arriba = actual.id - int(dim_y)
-                while w is not None:
-                    if w.indice_terreno == indice_terreno:
-                        if int(actual.x) == 1:
-                            valor_arriba = False
-                            break
-                        if id_arriba is w.id:
-                            up = w
-                            print('Arriba valor: ',up.valor,' - x:', up.x,' - y:', up.y)
-                            break
-                        w = w.siguiente 
-                    else:    
-                        w = w.siguiente  
-                
-                posiciones = []
-                if valor_abajo:
-                    nuevo_abajo = Robot(down, down.valor, 'Abajo')
-                    posiciones.append(nuevo_abajo)
-                if valor_derecha:
-                    nuevo_derecha = Robot(right, right.valor, 'Derecha')
-                    posiciones.append(nuevo_derecha)
-                if valor_izquierda:
-                    nuevo_izquierda = Robot(left, left.valor, 'Izquierda')
-                    posiciones.append(nuevo_izquierda)
-                if valor_arriba:
-                    nuevo_arriba = Robot(up, up.valor, 'Arriba')
-                    posiciones.append(nuevo_arriba)
-                
-                self.ordenamiento(posiciones)
-                                       
-                k = 0
-                for k in range(len(posiciones)):
-                    pos = posiciones[k].posicion
-                    print('lista:',posiciones[k].nombre,' valor -',pos.valor,' - x:',pos.x,' - y:', pos.y )
-                    k += 1  
-                
-                i = 0
-                for i in range(len(posiciones)):  
-                    if posicion_elegida is not None or posicion_actual is not None:
-                        posicion_elegida = posiciones[i].posicion
-                        if posicion_elegida.entro is False:
-                            break
-                        #if posicion_elegida.id is posicion_actual.id or posicion_elegida.entro is True:
-                            #posicion_elegida = posiciones[i].posicion
-                        #else:
-                         #   break
-                    else:
-                        posicion_elegida = posiciones[i].posicion
-                        break
-                posicion_actual = actual  
+        if combustible > 0:
+            while actual is not final:
+                if actual.indice_terreno is indice_terreno:
+                    valor_derecha = True 
+                    valor_izquierda = True
+                    valor_abajo = False
+                    valor_arriba = True
+                    w = self.inicio   
+                    s = actual     
+                    up = None
+                    down = None
+                    #print('\n....................')
+                    #print("Actual valor: ",actual.valor)  
+                    #----------Derecha-------------            
+                    tmp = actual.siguiente
+                    right = tmp
+                    if tmp is None:
+                        right is None
+                        valor_derecha = False
+                    if tmp.y < actual.y:
+                        right is None
+                        valor_derecha = False
                     
-                print("elegido:",posicion_elegida.valor,' - x:',posicion_elegida.x,' - y',posicion_elegida.y) 
-                gasto_combustible += int(posicion_elegida.valor)
-                actual.setEntro(True)
-                posiciones.clear()     
-                actual = posicion_elegida 
-                if actual is final: 
-                    final.setEntro(True)  
+                    #if right is not None:
+                        #print('Derecha valor: ',right.valor,' - x:', right.x,' - y:', right.y)    
+                    #----------Izquierda-------------
+                    tmp2 = actual.anterior
+                    left = tmp2  
+                    if tmp2 is None:
+                        left = None
+                        valor_izquierda = False
+                    if tmp2.y > actual.y:
+                        left = None
+                        valor_izquierda = False
                     
-                if contador == tamano_terreno:
-                    print('\t \t \t¡ALERTA! \n<<<<<Lastimosamente hemos perdido comunicación con r2e2!')
-                    print('Se ha extraviado en su viaje por los inhóspitos terrenos>>>>>')
-                    print('\n\t\t<<<<<Gasto combustible>>>>>','\n\t\t\t    ',gasto_combustible)
-                    combustible -= gasto_combustible
-                    print('\n\t\t<<<<<Combustible Sobrante>>>>>''\n\t\t\t    ',combustible,'\n')
-                    return
-                contador += 1
+                    #if left is not None:
+                        #print('Izquierda valor: ',left.valor,' - x:', left.x,' - y:', left.y)      
+                    #----------Abajo-------------
+                    id_abajo = actual.id + int(dim_y)
+                    while s is not None:
+                        if s.indice_terreno == indice_terreno:
+                            if id_abajo == s.id:
+                                valor_abajo = True
+                                down = s
+                                break
+                        s = s.siguiente
                     
-            else:
-                actual = actual.siguiente 
-            if actual is None:
-                print('nooooooooooooooooooooooneeeeeeee')
-        print('\n<<<<<Gasto combustible>>>>>',gasto_combustible)
-        combustible -= gasto_combustible
-        print('\n<<<<<Combustible Sobrante>>>>>',combustible)
+                    #if down is not None:
+                        #print('Abajo valor: ',down.valor,' - x:', down.x,' - y:', down.y) 
+                    #----------Arriba-------------
+                    id_arriba = actual.id - int(dim_y)
+                    while w is not None:
+                        if w.indice_terreno == indice_terreno:
+                            if int(actual.x) == 1:
+                                valor_arriba = False
+                                break
+                            if id_arriba is w.id:
+                                up = w
+                                #print('Arriba valor: ',up.valor,' - x:', up.x,' - y:', up.y)
+                                break
+                            w = w.siguiente 
+                        else:    
+                            w = w.siguiente  
+                    
+                    posiciones = []
+                    if valor_abajo:
+                        nuevo_abajo = Robot(down, down.valor, 'Abajo')
+                        posiciones.append(nuevo_abajo)
+                    if valor_derecha:
+                        nuevo_derecha = Robot(right, right.valor, 'Derecha')
+                        posiciones.append(nuevo_derecha)
+                    if valor_izquierda:
+                        nuevo_izquierda = Robot(left, left.valor, 'Izquierda')
+                        posiciones.append(nuevo_izquierda)
+                    if valor_arriba:
+                        nuevo_arriba = Robot(up, up.valor, 'Arriba')
+                        posiciones.append(nuevo_arriba)
+                    
+                    self.ordenamiento(posiciones)
+                    
+                    i = 0
+                    for i in range(len(posiciones)):  
+                        if posicion_elegida is not None or posicion_actual is not None:
+                            posicion_elegida = posiciones[i].posicion
+                            if posicion_elegida.entro is False:
+                                break
+                        else:
+                            posicion_elegida = posiciones[i].posicion
+                            break
+                    posicion_actual = actual  
+                        
+                    #print("elegido:",posicion_elegida.valor,' - x:',posicion_elegida.x,' - y',posicion_elegida.y) 
+                    gasto_combustible += int(posicion_elegida.valor)
+                    actual.setEntro(True)
+                    posiciones.clear()     
+                    actual = posicion_elegida 
+                    if actual is final: 
+                        final.setEntro(True)  
+                        
+                    if contador == tamano_terreno:
+                        print('\t \t \t¡ALERTA! \n<<<Lastimosamente hemos perdido comunicación con R2e2!')
+                        print('Se ha extraviado en su viaje por los inhóspitos terrenos>>>')
+                        print('\n<<<Gasto combustible>>>\n',gasto_combustible)
+                        combustible -= gasto_combustible
+                        print('\n<<<Combustible Sobrante>>>\n',combustible,'\n')
+                        return
+                    contador += 1
+                        
+                else:
+                    actual = actual.siguiente 
+                if actual is None:
+                    print('Fin')
+            print('\n<<<Gasto combustible>>>\n',gasto_combustible)
+            combustible -= gasto_combustible
+            print('\n<<<Combustible Sobrante>>>\n',combustible,'\n')
+        else:
+            print('\t \t \t¡ALERTA! \n<<<El Robot R2e2 se ha quedado sin combustible>>>\n')
+            print('<<<Combustible Sobrante>>>\n0')
+    
+    def limpieza(self):
+        actual_limpieza = self.inicio
+        while actual_limpieza is not None:
+            actual_limpieza.setEntro(False)
+            actual_limpieza = actual_limpieza.siguiente
                
     def ordenamiento(self,posiciones):
         for i in range(1,len(posiciones)):
