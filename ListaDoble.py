@@ -350,22 +350,18 @@ class ListaDoble():
                         self.insertar_robot(down, down.valor, 'Abajo')
                         #nuevo_abajo = Robot(down, down.valor, 'Abajo')
                         #posiciones.append(nuevo_abajo)
-                        #down_valor = down.valor
                     if valor_derecha:
                         self.insertar_robot(right, right.valor, 'Derecha')
                         #nuevo_derecha = Robot(right, right.valor, 'Derecha')
                         #posiciones.append(nuevo_derecha)
-                        #right_valor = right.valor
                     if valor_izquierda:
                         self.insertar_robot(left, left.valor, 'Izquierda')
                         #nuevo_izquierda = Robot(left, left.valor, 'Izquierda')
                         #posiciones.append(nuevo_izquierda)
-                        #left_valor = left.valor
                     if valor_arriba:
                         self.insertar_robot(up, up.valor, 'Arriba')
                         #nuevo_arriba = Robot(up, up.valor, 'Arriba')
                         #posiciones.append(nuevo_arriba)
-                        #up_valor = up.valor
                             
                     
                     
