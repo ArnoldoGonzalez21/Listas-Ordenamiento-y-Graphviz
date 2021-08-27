@@ -1,4 +1,3 @@
-#from typing import final
 from Robot import Robot
 from Posicion import Posicion
 from Terreno import Terreno
@@ -10,6 +9,8 @@ fin_y = 0
 dim_x = 0
 dim_y = 0  
 combustible = 9999
+gasto_combustible = 0
+
 class ListaDoble():
   
     def __init__(self):
@@ -143,6 +144,31 @@ class ListaDoble():
                 break
             actual_datos = actual_datos.siguiente
     
+    def datos_salida_terreno(self,indice_terreno):
+        global gasto_combustible
+        actual_datos = self.inicio_terreno
+        contenido = ''
+        while actual_datos is not None:
+            if actual_datos.indice is indice_terreno:
+                contenido += '\n\t<dimension>\n\t\t<m>'+actual_datos.dimension_x+'</m>\n\t\t<n>'+actual_datos.dimension_y+'</n>\n\t</dimension>\n'
+                contenido += '\t<posicioninicio>\n\t\t<x>'+actual_datos.incio_x+'</x>\n\t\t<y>'+actual_datos.incio_y+'</y>\n\t</posicioninicio>\n'
+                contenido += '\t<posicionfin>\n\t\t<x>'+actual_datos.final_x+'</x>\n\t\t<y>'+actual_datos.final_y+'</y>\n\t</posicionfin>\n'
+                contenido += '\t<combustible>'+str(gasto_combustible)+'</combustible>\n'
+                break
+            actual_datos = actual_datos.siguiente
+        return contenido
+    
+    def datos_salida_posicion(self, indice_terreno):
+        actual_posicion = self.inicio
+        contenido = ''
+        while actual_posicion is not None:
+            if actual_posicion.indice_terreno is indice_terreno:
+                if actual_posicion.entro:
+                    contenido += '\t<posicion x=\"'+actual_posicion.x+'\" y=\"'+actual_posicion.y+'\">'+actual_posicion.valor+'</posicion>\n'
+            actual_posicion = actual_posicion.siguiente
+        contenido += '</terreno>'
+        return contenido
+    
     def contenido_lateral(self):
         global dim_y
         global dim_x
@@ -179,10 +205,10 @@ class ListaDoble():
         contenido_enlace_rank = ''
         i = 0
         j = 0
-        k = 0
         actual = self.inicio
         actual_enlace = self.inicio
         actual_enlace_2 = self.inicio
+        
         while actual is not None:
             if int(actual.indice_terreno) == int(indice_terreno):
                 tmp = actual.siguiente
@@ -194,8 +220,6 @@ class ListaDoble():
                             contenido += 'nodo'+actual.x+'_'+actual.y+'[label=\"O\",fillcolor=gray,group='+str(int(actual.y) + 1)+']\n'
                     else: 
                         contenido += 'nodo'+actual.x+'_'+actual.y+'[label=\"'+actual.valor+'\",fillcolor=green,group='+str(int(actual.y) + 1)+']\n'
-                
-                    
                     break
                 if termino:
                     if actual.entro: 
@@ -268,12 +292,13 @@ class ListaDoble():
         global dim_x
         global dim_y
         global combustible
-        posicion_actual = None
+        global gasto_combustible
         gasto_combustible = 0
         contador = 0
         
+        print('\n\n- Calculando el tamaño del terreno')
         tamano_terreno = int(dim_x)*int(dim_y)
-        print('\n\n<<<Tamaño Terreno>>>\n',tamano_terreno)
+        print('\n<<<Tamaño Terreno>>>\n',tamano_terreno)
         while actual_tamano is not None:
             if actual_tamano.indice_terreno is indice_terreno:
                 if inicio_x is actual_tamano.x and inicio_y is actual_tamano.y:
@@ -282,6 +307,8 @@ class ListaDoble():
                     final = actual_tamano
             actual_tamano = actual_tamano.siguiente
         gasto_combustible += int(actual.valor)  
+        
+        print('\n- Calculando la ruta')
         if combustible > 0:
             while actual is not final:
                 if actual.indice_terreno is indice_terreno:
@@ -293,7 +320,6 @@ class ListaDoble():
                     s = actual     
                     up = None
                     down = None
-                    #print('\n....................')
                     #print("Actual valor: ",actual.valor)  
                     #----------Derecha-------------            
                     tmp = actual.siguiente
@@ -345,49 +371,22 @@ class ListaDoble():
                             w = w.siguiente 
                         else:    
                             w = w.siguiente  
-                    #posiciones = []
+             
                     if valor_abajo:
                         self.insertar_robot(down, down.valor, 'Abajo')
-                        #nuevo_abajo = Robot(down, down.valor, 'Abajo')
-                        #posiciones.append(nuevo_abajo)
                     if valor_derecha:
                         self.insertar_robot(right, right.valor, 'Derecha')
-                        #nuevo_derecha = Robot(right, right.valor, 'Derecha')
-                        #posiciones.append(nuevo_derecha)
                     if valor_izquierda:
                         self.insertar_robot(left, left.valor, 'Izquierda')
-                        #nuevo_izquierda = Robot(left, left.valor, 'Izquierda')
-                        #posiciones.append(nuevo_izquierda)
                     if valor_arriba:
                         self.insertar_robot(up, up.valor, 'Arriba')
-                        #nuevo_arriba = Robot(up, up.valor, 'Arriba')
-                        #posiciones.append(nuevo_arriba)
-                            
                     
-                    
-                    
-                    #self.ordenamiento(posiciones)
                     posicion_elegida = self.BubbleSort(posicion_elegida)
-                    
-                    """i = 0
-                    for i in range(len(posiciones)):  
-                        if posicion_elegida is not None or posicion_actual is not None:
-                            posicion_elegida = posiciones[i].posicion
-                            if posicion_elegida.entro is False:
-                                break
-                        else:
-                            posicion_elegida = posiciones[i].posicion
-                            break
-                    posicion_actual = actual"""  
-                    
-                    
-                    
-                        
-                    #print("elegido:",posicion_elegida.valor,' - x:',posicion_elegida.x,' - y',posicion_elegida.y) 
+                    #print("elegida:",posicion_elegida.valor,' - x:',posicion_elegida.x,' - y',posicion_elegida.y) 
                     gasto_combustible += int(posicion_elegida.valor)
-                    actual.setEntro(True)
-                    #posiciones.clear()     
+                    actual.setEntro(True)  
                     actual = posicion_elegida 
+                    
                     if actual is final: 
                         final.setEntro(True)  
                         
@@ -416,21 +415,7 @@ class ListaDoble():
         while actual_limpieza is not None:
             actual_limpieza.setEntro(False)
             actual_limpieza = actual_limpieza.siguiente
-               
-    """def ordenamiento(self,posiciones):
-        for i in range(1,len(posiciones)):
-            for j in range(0,len(posiciones)-i):
-                if (posiciones[j+1].valor < posiciones[j].valor):
-                    aux = posiciones[j].valor
-                    aux2 = posiciones[j].posicion
-                    aux3 = posiciones[j].nombre
-                    posiciones[j].valor = posiciones[j+1].valor
-                    posiciones[j].posicion = posiciones[j+1].posicion
-                    posiciones[j].nombre = posiciones[j+1].nombre
-                    posiciones[j+1].valor = aux 
-                    posiciones[j+1].posicion = aux2 
-                    posiciones[j+1].nombre = aux3 """
-    
+                   
     def BubbleSort(self, posicion_elegida):
         actual = self.inicio_robot
         if self.size_robot > 1:
@@ -470,8 +455,3 @@ class ListaDoble():
         self.inicio_robot = None
         self.final_robot = None  
         return posicion_elegida    
-                            
-                    
-    
-    
-                

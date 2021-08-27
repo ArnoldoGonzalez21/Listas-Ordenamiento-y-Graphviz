@@ -4,14 +4,18 @@ from ListaDoble import ListaDoble
 
 terrenos = ListaDoble() 
 posiciones = ListaDoble()
+indice_terreno = -1
 
 def leer_archivo():
-    #ruta = str(input('Ingrese la Ruta del Archivo: '))
-    ruta = 'entrada.xml'
-    with open(ruta, 'rt',encoding='utf-8') as f:
-        tree = ET.parse(f)
-        root = tree.getroot()
-    
+    ruta = str(input('Ingrese la Ruta del Archivo: '))
+    try:
+        with open(ruta, 'rt',encoding='utf-8') as f:
+            tree = ET.parse(f)
+            root = tree.getroot()
+    except OSError:
+        print("<<< No se pudo leer el Archivo "+ruta+' >>>')
+        return
+        
     contador = 0
     for elem in root:      
         nombre = elem.get('nombre') #nombre del terreno
@@ -54,8 +58,6 @@ def pedir_numero():
             print('Elige un número')
     return numero
 
-indice_terreno = -1
-
 def procesar_terreno(grafica):
     global indice_terreno
     if grafica:
@@ -77,6 +79,22 @@ def procesar_terreno(grafica):
         generarGraphviz(indice_terreno,False)
         generarGraphviz(indice_terreno,True)
 
+def escribir_archivo():
+    global indice_terreno
+    if indice_terreno != -1:
+        ruta = str(input('Ingrese la Ruta Relativa del Archivo: '))
+        nombre_terreno = terrenos.buscar_nombre_terreno(indice_terreno)
+        inicio_xml = '<terreno nombre=\"'+ nombre_terreno + '\">'
+        datos_salida_terreno = terrenos.datos_salida_terreno(indice_terreno)
+        datos_salida_posicion = posiciones.datos_salida_posicion(indice_terreno)
+        contenido = inicio_xml + datos_salida_terreno + datos_salida_posicion
+        miArchivo= open(ruta,'w')
+        miArchivo.write(contenido)
+        miArchivo.close()
+        print('Se generó el archivo correctamente')
+    else:
+        print('Elige el terreno a procesar')
+
 def generarGraphviz(indice, termino):
     indice = str(indice)
     nombre_terreno = terrenos.buscar_nombre_terreno(indice)
@@ -94,21 +112,21 @@ def generarGraphviz(indice, termino):
     nodos = posiciones.enlazar_nodos(indice, termino)
     final_graphviz = '}   }'
     graphviz = inicio_graphviz + lateral + nodos + final_graphviz
-    print(graphviz)
+    #print(graphviz)
     if termino:
-        miArchivo= open('graphviz_explorado'+indice+'.dot','w')
+        miArchivo= open('graphviz_explorado_'+indice+'.dot','w')
         miArchivo.write(graphviz)
         miArchivo.close()
-        system('dot -Tpng graphviz_explorado'+indice+'.dot -o Terreno_explorado'+indice+'.png')
-        system('cd ./Terreno_explorado'+indice+'.png')
-        startfile('Terreno_explorado'+indice+'.png')
+        system('dot -Tpng graphviz_explorado_'+indice+'.dot -o Terreno_explorado_'+indice+'.png')
+        system('cd ./Terreno_explorado_'+indice+'.png')
+        startfile('Terreno_explorado_'+indice+'.png')
     else:
-        miArchivo= open('graphviz_inexplorado'+indice+'.dot','w')
+        miArchivo= open('graphviz_inexplorado_'+indice+'.dot','w')
         miArchivo.write(graphviz)
         miArchivo.close()
-        system('dot -Tpng graphviz_inexplorado'+indice+'.dot -o Terreno_inexplorado'+indice+'.png')
-        system('cd ./Terreno_inexplorado'+indice+'.png')
-        startfile('Terreno_inexplorado'+indice+'.png')
+        system('dot -Tpng graphviz_inexplorado_'+indice+'.dot -o Terreno_inexplorado_'+indice+'.png')
+        system('cd ./Terreno_inexplorado_'+indice+'.png')
+        startfile('Terreno_inexplorado_'+indice+'.png')
                   
 def main():
     termino = False
@@ -130,6 +148,7 @@ def main():
             procesar_terreno(False)
         elif opcion == 3:
             print('\nOpción Escribir Archivo Salida:')
+            escribir_archivo()
         elif opcion == 4:
             print('\nOpción Datos del Estudiante:')
             datos_estudiante()
