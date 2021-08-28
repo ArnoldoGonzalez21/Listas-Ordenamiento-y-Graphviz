@@ -10,6 +10,7 @@ def leer_archivo():
     ruta = str(input('Ingrese la Ruta del Archivo: '))
     try:
         with open(ruta, 'rt',encoding='utf-8') as f:
+            print('Archivo cargado con éxito')
             tree = ET.parse(f)
             root = tree.getroot()
     except OSError:
@@ -114,19 +115,19 @@ def generarGraphviz(indice, termino):
     graphviz = inicio_graphviz + lateral + nodos + final_graphviz
     #print(graphviz)
     if termino:
-        miArchivo= open('graphviz_explorado_'+indice+'.dot','w')
+        miArchivo= open('graphviz_explorado_'+nombre_terreno+'.dot','w')
         miArchivo.write(graphviz)
         miArchivo.close()
-        system('dot -Tpng graphviz_explorado_'+indice+'.dot -o Terreno_explorado_'+indice+'.png')
-        system('cd ./Terreno_explorado_'+indice+'.png')
-        startfile('Terreno_explorado_'+indice+'.png')
+        system('dot -Tpng graphviz_explorado_'+nombre_terreno+'.dot -o Terreno_explorado_'+nombre_terreno+'.png')
+        system('cd ./Terreno_explorado_'+nombre_terreno+'.png')
+        startfile('Terreno_explorado_'+nombre_terreno+'.png')
     else:
-        miArchivo= open('graphviz_inexplorado_'+indice+'.dot','w')
+        miArchivo= open('graphviz_inexplorado_'+nombre_terreno+'.dot','w')
         miArchivo.write(graphviz)
         miArchivo.close()
-        system('dot -Tpng graphviz_inexplorado_'+indice+'.dot -o Terreno_inexplorado_'+indice+'.png')
-        system('cd ./Terreno_inexplorado_'+indice+'.png')
-        startfile('Terreno_inexplorado_'+indice+'.png')
+        system('dot -Tpng graphviz_inexplorado_'+nombre_terreno+'.dot -o Terreno_inexplorado_'+nombre_terreno+'.png')
+        system('cd ./Terreno_inexplorado_'+nombre_terreno+'.png')
+        startfile('Terreno_inexplorado_'+nombre_terreno+'.png')
                   
 def main():
     termino = False
