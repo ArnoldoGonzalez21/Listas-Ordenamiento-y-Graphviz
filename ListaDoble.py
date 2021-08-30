@@ -110,10 +110,12 @@ class ListaDoble():
             actual_ter = actual_ter.siguiente  
              
     def buscar_nombre_terreno(self,indice_terreno):
+        datos_terreno = ''
         actual_ter = self.inicio_terreno
         while actual_ter is not None:
             if int(indice_terreno) == int(actual_ter.indice):
-                return actual_ter.nombre  
+                datos_terreno = actual_ter.nombre + '_' + actual_ter.dimension_x + 'x' + actual_ter.dimension_y
+                return datos_terreno
             actual_ter = actual_ter.siguiente
         return 'Nombre Desconocido'              
     
